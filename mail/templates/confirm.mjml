@@ -1,0 +1,20 @@
+<mjml>
+    <mj-head>
+        <mj-title>Test</mj-title>
+        <mj-attributes>
+            
+        </mj-attributes>
+    </mj-head>
+    <mj-body>
+        <mj-section>
+            <mj-column>
+                <mj-text>
+                    Welcome {{ user }}!
+                </mj-text>
+                <mj-button background-color="#F63A4D" href="{{ url }}">
+                        Confirm account
+                    </mj-button>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>
