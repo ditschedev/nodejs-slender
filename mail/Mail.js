@@ -16,8 +16,6 @@ class Mail {
         let mjml = fs.readFileSync(__dirname + '/templates/' + template + '.mjml','utf8');
         let rendered = mustache.render(mjml, data);
         this.html = mjml2html(rendered).html;
-
-        console.log("Generated");
     }
 
     setHTML(html) {
