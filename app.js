@@ -1,15 +1,14 @@
-var express = require("express");
-var path = require("path");
-var logger = require("morgan");
+const express = require("express");
+const path = require("path");
+const logger = require("morgan");
 require("dotenv").config();
-var indexRouter = require("./routes/index");
-var apiRouter = require("./routes/api");
-var apiResponse = require("./helpers/apiResponse");
-var cors = require("cors");
+const router = require("./routes/index");
+const RestResponse = require('./app/response/RestResponse');
+const cors = require("cors");
 
 // DB connection
-var MONGODB_URL = process.env.MONGODB_URL;
-var mongoose = require("mongoose");
+const MONGODB_URL = process.env.MONGODB_URL;
+const mongoose = require("mongoose");
 mongoose.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
 	//don't show the log when it is test
 	if(process.env.NODE_ENV !== "test") {
@@ -22,9 +21,9 @@ mongoose.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true 
 		console.error("App starting error:", err.message);
 		process.exit(1);
 	});
-var db = mongoose.connection;
+const db = mongoose.connection;
 
-var app = express();
+let app = express();
 
 //don't show the log when it is test
 if(process.env.NODE_ENV !== "test") {
@@ -34,18 +33,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 //To allow cross-origin requests
-app.use(cors({origin: true}));
+app.use(cors());
 
-app.use("/", apiRouter);
+app.use("/", router);
 
 // throw 404 if URL not found
 app.all("*", function(req, res) {
-	return apiResponse.notFoundResponse(res, "Page not found");
+	return RestResponse.notFound(res);
 });
 
 app.use((err, req, res) => {
 	if(err.name == "UnauthorizedError"){
-		return apiResponse.unauthorizedResponse(res, err.message);
+		return RestResponse.unauthorized(res, err.message);
 	}
 });
 
