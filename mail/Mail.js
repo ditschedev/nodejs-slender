@@ -1,7 +1,7 @@
 const constants = require('../helper/constants');
 const mustache = require("mustache");
-const mjml = require("mjml");
 const fs = require('fs');
+const mjml2html = require('mjml');
 
 class Mail {
 
@@ -12,19 +12,12 @@ class Mail {
     }
 
     render(template, data) {
+        
+        let mjml = fs.readFileSync(__dirname + '/templates/' + template + '.mjml','utf8');
+        let rendered = mustache.render(mjml, data);
+        this.html = mjml2html(rendered).html;
 
-        fs.readFile('./templates/' + template + ".mjml", 'utf-8', (err, mjml) => {
-
-            if(err) {
-                return console.log(err);
-            }
-
-            let rendered = mustache.render(mjml, data);
-
-            this.html = mjml(rendered).html;
-
-        });
-
+        console.log("Generated");
     }
 
     setHTML(html) {
@@ -36,3 +29,5 @@ class Mail {
     }
 
 }
+
+module.exports = Mail;

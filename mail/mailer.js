@@ -31,7 +31,7 @@ exports.send = function(from, to, subject, html) {
 	});
 }
 
-exports.send = function(mail) {
+exports.sendMail = function(mail) {
 
     return transporter.sendMail({
 		from: mail.from,

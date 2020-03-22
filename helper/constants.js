@@ -1,5 +1,5 @@
 module.exports = {
     mailer: {
-        from: 'no-reply@example.dev'
+        from: process.env.EMAIL_FROM || 'no-reply@localhost'
     }
 };
