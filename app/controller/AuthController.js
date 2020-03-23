@@ -1,10 +1,8 @@
-const Joi = require('joi');
 const RestResponse = require('../response/RestResponse');
+const validate = require('../validation/Validator');
 
 exports.register = (req, res) => {
-
-        const Validator = Joi.object({
-    
+        validate(req, {
             firstName: Joi.string()
                         .alphanum()
                         .min(1)
@@ -20,15 +18,9 @@ exports.register = (req, res) => {
             password: Joi.string()
                         .min(6)
                         .required()
-        }).options({abortEarly: false});
-    
-        const {error, value} = Validator.validate(req.body);
-    
-        if(error) {
+        }).then((body) => {
+            return RestResponse.success(res, "Test");
+        }).catch((error) => {
             return RestResponse.invalidData(res, 'Invalid data', error);
-        }
-    
-        return RestResponse.success(res, "Test");
-        
-    
+        });
     };
