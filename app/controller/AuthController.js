@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { randomString, generateLink } = require('../../helper/utils');
 const Mail = require('../../mail/Mail');
 const rules = require('../../validation/rules');
+const jwt = require("jsonwebtoken");
 
 exports.register = [
     validator(rules.auth.create),
@@ -35,6 +36,36 @@ exports.register = [
                     user.save(function (err) {
                         if (err) { return RestResponse.error(res, err); }
                         return RestResponse.successData(res,"Registration Success.", user.toJSON());
+                    });
+                });
+            });
+        } catch(err) {
+            return RestResponse.error(res, err);
+        }
+    }
+];
+
+exports.login = [
+    validator(rules.auth.login),
+    (req, res) => {
+        try {
+            User.findOne({email: req.body.email}).then((user) => {
+                if(!user) {
+                    return RestResponse.unauthorized(res, "Invalid email or password");
+                }
+
+                bcrypt.compare(req.body.password, user.password, (err, same) => {
+                    if(!same) return RestResponse.unauthorized(res, "Invalid email or password");
+                    if(!user.isConfirmed) return RestResponse.unauthorized(res, "Account is not confirmed, please confirm your account");
+                    if(!user.status) return RestResponse.unauthorized(res, "Account is not active");
+
+                    const secret = process.env.JWT_SECRET;
+                    const token = jwt.sign(user.toJSON(), secret, {
+                        expiresIn: process.env.JWT_TIMEOUT_DURATION
+                    });
+
+                    return RestResponse.successData(res, "Login successfull", {
+                        token: token
                     });
                 });
             });

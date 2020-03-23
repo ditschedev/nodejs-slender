@@ -30,7 +30,7 @@ exports.notFound = function(res) {
 exports.invalidData = function(res, msg, data) {
 
     if(data.details) {
-        return res.status(400).json({
+        return res.status(422).json({
             success: false,
             message: msg,
             data: data.details
@@ -44,9 +44,17 @@ exports.invalidData = function(res, msg, data) {
     });
 };
 
-exports.unauthorized = function(res) {
+exports.unauthorized = function(res, msg) {
     return res.status(401).json({
         success: false,
-        message: 'Unauthorized'
+        message: msg
     });
 };
+
+exports.send = function(res, status, success, msg, data) {
+    return res.status(status).json({
+        success: success,
+        message: msg,
+        data: data
+    });
+}
