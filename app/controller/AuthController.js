@@ -1,7 +1,5 @@
 const User = require('../../model/User');
-const Joi = require('joi');
 const RestResponse = require('../response/RestResponse');
-const validate = require('../../validation/rules');
 const validator = require('../middleware/validator');
 const bcrypt = require("bcrypt");
 const { randomString, generateLink } = require('../../helper/utils');
