@@ -28,6 +28,15 @@ exports.notFound = function(res) {
 };
 
 exports.invalidData = function(res, msg, data) {
+
+    if(data.details) {
+        return res.status(400).json({
+            success: false,
+            message: msg,
+            data: data.details
+        });
+    }
+
     return res.status(400).json({
         success: false,
         message: msg,
