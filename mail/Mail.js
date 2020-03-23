@@ -2,6 +2,7 @@ const constants = require('../helper/constants');
 const mustache = require("mustache");
 const fs = require('fs');
 const mjml2html = require('mjml');
+const nodemailer = require("nodemailer");
 
 class Mail {
 
@@ -9,6 +10,20 @@ class Mail {
         this.from = constants.mailer.from;
         this.to = to;
         this.subject = subject;
+
+        this._init();
+    }
+
+    _init() {
+        this._transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_SMTP_HOST,
+            port: process.env.EMAIL_SMTP_PORT,
+            secure: process.env.EMAIL_SMTP_SECURE,
+            auth: {
+                user: process.env.EMAIL_SMTP_USERNAME,
+                pass: process.env.EMAIL_SMTP_PASSWORD
+            }
+        });
     }
 
     render(template, data) {
@@ -24,6 +39,15 @@ class Mail {
 
     setFrom(from) {
         this.from = from;
+    }
+
+    send() {
+        return this._transporter.sendMail({
+            from: this.from,
+            to: this.to,
+            subject: this.subject, 
+            html: this.html
+        });
     }
 
 }
