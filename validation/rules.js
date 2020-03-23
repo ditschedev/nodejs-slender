@@ -33,6 +33,20 @@ module.exports = {
                         .trim()
                         .min(1)
                         .required()
+        },
+        verify: {
+            confirmKey: Joi.string()
+                        .trim()
+                        .min(16)
+                        .max(16)
+                        .required()
+        },
+        resend: {
+            email: Joi.string()
+                    .trim()
+                    .min(1)
+                    .email()
+                    .required()
         }
     }
 }

@@ -74,3 +74,52 @@ exports.login = [
         }
     }
 ];
+
+exports.verify = [
+    validator(rules.auth.verify),
+    (req, res) => {
+        try {
+            User.findOne({confirmKey: req.body.confirmKey}).then((user) => {
+                if(!user) return RestResponse.unauthorized(res, 'Invalid confirmation key');
+                if(user.isConfirmed) return RestResponse.success(res, "Account has already been confirmed");
+                user.isConfirmed = true;
+                user.save().then((user) => {
+                    return RestResponse.success(res, "Account successfully confirmed");
+                }).catch((err) => {
+                    return RestResponse.error(res, err);
+                });
+            });
+        } catch(err) {
+            return RestResponse.error(res, err);
+        }
+    }
+];
+
+exports.resendConfirmation = [
+    validator(rules.auth.resend),
+    (req, res) => {
+        try {
+            User.findOne({email: req.body.email}).then((user) => {
+                if(!user) {
+                    return RestResponse.bad(res, "Invalid email address");
+                }
+                if(user.isConfirmed) return RestResponse.bad("Account already confirmed");
+                let key = randomString(16);
+                user.confirmKey = key;
+                user.save().then((user) => {
+                    let mail = new Mail(req.body.email, 'Confirm your account');
+                    mail.render('confirm', {
+                        user: req.body.firstName,
+                        url: generateLink('/confirm/' + key)
+                    });
+                    mail.send();
+                    RestResponse.success(res, "Confirmation email resent");
+                }).catch((err) => {
+                    RestResponse.error(res, err);
+                });
+            });
+        } catch(err) {
+            return RestResponse.error(res, err);
+        }
+    }
+];

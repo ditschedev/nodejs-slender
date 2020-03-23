@@ -57,4 +57,11 @@ exports.send = function(res, status, success, msg, data) {
         message: msg,
         data: data
     });
-}
+};
+
+exports.bad = function(res, msg) {
+    return res.status(400).json({
+        success: false,
+        message: msg
+    });
+};
