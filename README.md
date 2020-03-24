@@ -8,8 +8,13 @@ This is a barebone boilerplate for creating a nodejs api. It comes with the foll
 ---
 - [NodeJS Slender](#nodejs-slender)
   - [Creating a new project](#creating-a-new-project)
-  - [Predefined routes](#predefined-routes)
-  - [Email templates usage](#email-templates-usage)
+  - [Authentication](#authentication)
+    - [Middleware](#middleware)
+    - [Routes](#routes)
+  - [Send emails from your app](#send-emails-from-your-app)
+    - [Templated emails](#templated-emails)
+    - [Simple emails](#simple-emails)
+  - [Validation](#validation)
 
 ---
 
@@ -42,7 +47,13 @@ yarn start
 
 ---
 
-## Predefined routes
+## Authentication
+The authentication is done using JWT. The generated token must be send with every following request in the `Authorization` header.
+
+### Middleware
+To protect a route from unauthenticated users, you can add the `auth` middleware to it. To do that, you attach it to the `controller`'s export `array`. The last element of this `array` is the actual function. The elements before are used as middleware.
+
+### Routes
 For the authentication the following routes are predefined and used:
 
 - #### `POST /register`
@@ -54,7 +65,7 @@ For the authentication the following routes are predefined and used:
     - ##### `email`: `string`, `email`, `unique`, `required` *The users email. An email can only be registered once.*
     - ##### `password`: `string`, `min(6)`, `required` *The plaintext password. Will be hashed using bcrypt.*
 
-    **Response**: Responds with the created user. If failed returns errors.
+    **Response**: Responds with the created user. If failed -> returns errors.
 
     ##### Sample:
     ```json
@@ -73,7 +84,7 @@ For the authentication the following routes are predefined and used:
     - ##### `email`: `string`, `email`, `required` *The users email.*
     - ##### `password`: `string`, `required` *The plaintext password.*
 
-    **Response**: If valid -> returns the generated jwt token, if failed returns a `401
+    **Response**: If valid -> returns the generated jwt token, if failed -> returns a `401
     Unauthorized` with a reason.
 
     ##### Sample:
@@ -86,9 +97,28 @@ For the authentication the following routes are predefined and used:
     }
     ```
 
+- #### `POST /verify`
+    Attempts the confirmation of an account using the `confirmKey`.
+
+    **Request**:
+    - ##### `confirmKey`: `string`, `length(16)`, `required` *The given 16 digit confirmation key*
+
+    **Response**: If valid -> returns the generated jwt token, if failed -> returns a `401
+    Unauthorized` with a reason.
+
+    ##### Sample:
+    ```json
+    body: {
+        "confirmKey": "ld84jflsow39lc0e"
+    }
+    ```
+
 ---
 
-## Email templates usage
+## Send emails from your app
+There are two possible ways of sending an email. You can use mjml and mustache to generate beautiful, responsive emails with variables in a few lines of code, or just ship generic html or plaintext emails.
+
+### Templated emails
 To use the built-in email functionality you have to add your templates first. Add your template as `<name>.mjml` to the `mail/template` folder.
 You can create subfolders in the `mail/template` folder for organization, but keep in mind that you need to append that subfolder name to the path
 to the template when attempting to render it!
@@ -120,4 +150,35 @@ mail.send().then(() => {
     console.error(err);
     // Do something with the failed email.
 });
+```
+
+### Simple emails
+If you just want to send a basic email without templating and mjml, you can use the `mail/mailer` module. Import
+it and use the send function.
+```javascript
+const mailer = require('path/to/mail/mailer');
+
+mailer.send(_to, _subject, _htmlOrText, _from);
+```
+This function is returing a `Promise` to.
+
+--- 
+
+## Validation
+Validation is super easy with this boilerplate. All the validation rules are stored in the `validation/rules` module.
+You can create your own files, but make sure you require them in where you need them. These rules are basicly just objects consumed by Joi. To enable validation for a new route, add the route segments to the `validation/rules` module and add the `validator` middleware to your desired route.
+
+For example you want to enable validation for the route `POST /posts` you would create an object under `posts.create` with your desired validation rules. After that, go into your `PostController` and add the following import:
+```javascript
+const { posts } = require('path/to/validation/rules');
+```
+and add the middleware to your method:
+```javascript
+exports.create = [
+    auth,
+    validator(posts.create),
+    (req, res) => {
+        // Your controller logic
+    }
+];
 ```
