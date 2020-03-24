@@ -11,17 +11,7 @@ let transporter = nodemailer.createTransport({
 	}
 });
 
-
-exports.send = function(to, subject, html) {
-    return transporter.sendMail({
-		from: process.env.EMAIL_FROM,
-		to: to,
-		subject: subject, 
-		html: html
-	});
-}
-
-exports.send = function(from, to, subject, html) {
+exports.send = function(to, subject, html, from = process.env.EMAIL_FROM) {
     return transporter.sendMail({
 		from: from,
 		to: to,
