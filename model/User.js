@@ -7,10 +7,10 @@ var UserSchema = new mongoose.Schema({
 	password: {type: String, required: true},
 	isConfirmed: {type: Boolean, required: true, default: 0},
 	confirmKey: {type: String, required:false},
-	status: {type: Boolean, required: true, default: 1}
+	status: {type: Boolean, required: true, default: 1},
+	posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
 }, {timestamps: true});
 
-// Virtual for user's full name
 UserSchema
 	.virtual("fullName")
 	.get(function () {
