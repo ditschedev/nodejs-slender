@@ -48,5 +48,19 @@ module.exports = {
                     .email()
                     .required()
         }
+    },
+    posts: {
+        create: {
+            title: Joi.string()
+                    .min(4)
+                    .required(),
+            description: Joi.string()
+                            .min(1)
+                            .max(32)
+                            .required(),
+            body: Joi.string()
+                    .min(1)
+                    .required()
+        }
     }
 }
