@@ -4,11 +4,11 @@ const validator = require('../middleware/validator');
 const bcrypt = require("bcrypt");
 const { randomString, generateLink } = require('../../helper/utils');
 const Mail = require('../../mail/Mail');
-const rules = require('../../validation/rules');
+const { auth } = require('../../validation/rules');
 const jwt = require("jsonwebtoken");
 
 exports.register = [
-    validator(rules.auth.create),
+    validator(auth.create),
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {
@@ -44,7 +44,7 @@ exports.register = [
 ];
 
 exports.login = [
-    validator(rules.auth.login),
+    validator(auth.login),
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {
@@ -74,7 +74,7 @@ exports.login = [
 ];
 
 exports.verify = [
-    validator(rules.auth.verify),
+    validator(auth.verify),
     (req, res) => {
         try {
             User.findOne({confirmKey: req.body.confirmKey}).then((user) => {
@@ -94,7 +94,7 @@ exports.verify = [
 ];
 
 exports.resendConfirmation = [
-    validator(rules.auth.resend),
+    validator(auth.resend),
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {
