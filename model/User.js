@@ -7,8 +7,7 @@ var UserSchema = new mongoose.Schema({
 	password: {type: String, required: true},
 	isConfirmed: {type: Boolean, required: true, default: 0},
 	confirmKey: {type: String, required:false},
-	status: {type: Boolean, required: true, default: 1},
-	posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
+	status: {type: Boolean, required: true, default: 1}
 }, {timestamps: true});
 
 UserSchema
