@@ -1,4 +1,3 @@
-const constants = require('../helper/constants');
 const mustache = require("mustache");
 const fs = require('fs');
 const mjml2html = require('mjml');
@@ -7,7 +6,7 @@ const nodemailer = require("nodemailer");
 class Mail {
 
     constructor(to, subject) {
-        this.from = constants.mailer.from;
+        this.from = process.env.EMAIL_FROM;
         this.to = to;
         this.subject = subject;
 

@@ -6,7 +6,7 @@ const secret = process.env.JWT_SECRET;
 module.exports = (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer', '').trim();
-        const info  =  jwt.verify(token, "thisiskey")
+        const info  =  jwt.verify(token, secret)
         User.findOne({ _id: info.id}).then((user) => {
             if(!user) return RestResponse.unauthorized(res, "Invalid authentication token");
 

@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-const constants = require('../helper/constants');
 
 // Mailing transporter
 let transporter = nodemailer.createTransport({
@@ -15,7 +14,7 @@ let transporter = nodemailer.createTransport({
 
 exports.send = function(to, subject, html) {
     return transporter.sendMail({
-		from: constants.mailer.from,
+		from: process.env.EMAIL_FROM,
 		to: to,
 		subject: subject, 
 		html: html
