@@ -160,7 +160,7 @@ const mailer = require('path/to/mail/mailer');
 
 mailer.send(_to, _subject, _htmlOrText, _from);
 ```
-This function is returing a `Promise` to.
+This function is returing a `Promise` too.
 
 --- 
 
