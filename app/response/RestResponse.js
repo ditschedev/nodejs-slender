@@ -16,14 +16,14 @@ exports.successData = function(res, msg, data) {
 exports.error = function(res, msg) {
     return res.status(500).json({
         success: false,
-        message: msg
+        message: msg.message || msg
     });
 };
 
-exports.notFound = function(res) {
+exports.notFound = function(res, msg = "Page not found") {
     return res.status(404).json({
         success: false,
-        message: "Page not found"
+        message: msg
     });
 };
 
