@@ -29,14 +29,3 @@ exports.send = function(from, to, subject, html) {
 		html: html
 	});
 }
-
-exports.sendMail = function(mail) {
-
-    return transporter.sendMail({
-		from: mail.from,
-		to: mail.to,
-		subject: mail.subject, 
-		html: mail.html
-	});
-
-}
