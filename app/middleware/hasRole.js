@@ -6,7 +6,7 @@ module.exports = function(roleKey) {
             if(req.user.roles.some(role => role.roleKey === roleKey)) {
                 next();
             } else {
-                return RestResponse.unauthorized(res, "Access permitted");
+                return RestResponse.unauthorized(res, "Insufficient permissions");
             }
         } catch(err) {
             return RestResponse.error(res, err);

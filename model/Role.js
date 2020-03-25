@@ -3,7 +3,8 @@ var mongoose = require("mongoose");
 var RoleSchema = new mongoose.Schema({
 	title: {type: String, required: true},
 	roleKey: {type: String, required: true},
-	description: {type: String, required: true}
+    description: {type: String, required: true},
+    groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'Group'}],
 }, {timestamps: true});
 
 RoleSchema.methods = {
