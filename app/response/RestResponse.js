@@ -20,7 +20,7 @@ exports.error = function(res, msg) {
     });
 };
 
-exports.notFound = function(res, msg = "Page not found") {
+exports.notFound = function(res, msg = "Resource not found") {
     return res.status(404).json({
         success: false,
         message: msg
