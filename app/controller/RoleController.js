@@ -7,7 +7,7 @@ const Role = require('../../model/Role');
 
 exports.all = [
     auth,
-    //hasRole('ROLE_SHOW'),
+    hasRole('ROLE_SHOW'),
     (req, res) => {
         try {
             Role.find().exec((err, posts) => {

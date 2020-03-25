@@ -10,7 +10,7 @@ module.exports = function(object, abortEarly = false) {
 
         const {error, value} = Validator.validate(req.body);
 
-        if(error) invalidData(res, "Invalid data", error);
+        if(error) return invalidData(res, "Invalid data", error);
         else {
             req.body = value;
             next();

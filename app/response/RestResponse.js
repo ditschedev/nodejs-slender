@@ -51,6 +51,13 @@ exports.unauthorized = function(res, msg) {
     });
 };
 
+exports.forbidden = function(res, msg) {
+    return res.status(403).json({
+        success: false,
+        message: msg
+    });
+};
+
 exports.send = function(res, status, success, msg, data) {
     return res.status(status).json({
         success: success,
