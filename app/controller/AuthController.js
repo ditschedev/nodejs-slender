@@ -1,7 +1,6 @@
 const User = require('../../model/User');
 const RestResponse = require('../response/RestResponse');
 const validator = require('../middleware/validator');
-const bcrypt = require("bcrypt");
 const { randomString, generateLink } = require('../../helper/utils');
 const Mail = require('../../mail/Mail');
 const { auth } = require('../../validation/rules');
@@ -12,29 +11,20 @@ exports.register = [
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {
-                if(user) return RestResponse.invalidData(res, "Invalid data", "The email is already registered");
+                if(user) return RestResponse.conflict(res, "The email is already registered");
+                let key = randomString(16);
+                req.body.confirmKey = key;
 
-                bcrypt.hash(req.body.password,10,function(err, hash) {
-                    let key = randomString(16);
-                    var user = new User(
-                        {
-                            firstName: req.body.firstName,
-                            lastName: req.body.lastName,
-                            email: req.body.email,
-                            password: hash,
-                            confirmKey: key
-                        }
-                    );
-                    let mail = new Mail(req.body.email, 'Confirm your account');
-                    mail.render('confirm', {
-                        user: req.body.firstName,
-                        url: generateLink('/confirm/' + key)
-                    });
-                    mail.send();
-                    user.save(function (err) {
-                        if (err) { return RestResponse.error(res, err); }
-                        return RestResponse.successData(res,"Registration Success.", user.toJSON());
-                    });
+                var user = new User(req.body);
+                let mail = new Mail(req.body.email, 'Confirm your account');
+                mail.render('confirm', {
+                    user: req.body.firstName,
+                    url: generateLink('/confirm/' + key)
+                });
+                mail.send();
+                user.save(function (err) {
+                    if (err) { return RestResponse.error(res, err); }
+                    return RestResponse.successData(res,"Registration Success.", user);
                 });
             });
         } catch(err) {
@@ -51,9 +41,7 @@ exports.login = [
                 if(!user) {
                     return RestResponse.unauthorized(res, "Invalid email or password");
                 }
-
-                bcrypt.compare(req.body.password, user.password, (err, same) => {
-                    if(!same) return RestResponse.unauthorized(res, "Invalid email or password");
+                user.tryLogin(req.body.password).then(() => {
                     if(!user.isConfirmed) return RestResponse.unauthorized(res, "Account is not confirmed, please confirm your account");
                     if(!user.status) return RestResponse.unauthorized(res, "Account is not active");
 
@@ -65,6 +53,8 @@ exports.login = [
                     return RestResponse.successData(res, "Login successfull", {
                         token: token
                     });
+                }).catch((err) => {
+                    return RestResponse.unauthorized(res, err);
                 });
             });
         } catch(err) {

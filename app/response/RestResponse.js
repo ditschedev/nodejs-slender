@@ -65,3 +65,10 @@ exports.bad = function(res, msg) {
         message: msg
     });
 };
+
+exports.conflict = function(res, msg) {
+    return res.status(409).json({
+        success: false,
+        message: msg
+    });
+};

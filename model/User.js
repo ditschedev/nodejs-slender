@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+const bcrypt = require('bcrypt');
 
 var UserSchema = new mongoose.Schema({
 	firstName: {type: String, required: true},
@@ -18,14 +19,39 @@ UserSchema
 		return this.firstName + " " + this.lastName;
 	});
 
+UserSchema.pre('save', function(next) {
+	if(!this.isModified('password')) return next();
+	const user = this;
+	bcrypt.genSalt(12, function(err, salt) {
+		if (err) return next(err);
+		bcrypt.hash(user.password, salt, function(err, hash) {
+			if (err) return next(err);
+
+			user.password = hash;
+			next();
+		});
+	});
+});
+
 UserSchema.methods = {
+
+	tryLogin(password) {
+		return new Promise((resolve, reject) => {
+			bcrypt.compare(password, this.password, function(err, match) {
+				if (err) reject(err);
+				if(!match) reject("Invalid email or password"); 
+				resolve();
+			});
+		});
+	},
 
     toJSON() {
         return {
             id: this._id,
             firstName: this.firstName,
-            lastName: this.lastName,
+			lastName: this.lastName,
 			email: this.email,
+			isConfirmed: this.isConfirmed,
 			roles: this.roles,
 			groups: this.groups
         }
