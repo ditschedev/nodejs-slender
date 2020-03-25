@@ -5,6 +5,7 @@ var GroupSchema = new mongoose.Schema({
 	groupKey: {type: String, required: true},
 	description: {type: String, required: true},
     weight: {type: Number, required: true},
+    isDefault: {type: Boolean, required: true, default: 0},
     roles: [{type: mongoose.Schema.Types.ObjectId, ref: 'Role'}],
     users: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]
 }, {timestamps: true});
@@ -16,6 +17,7 @@ GroupSchema.methods = {
             title: this.title,
             description: this.description,
             groupKey: this.groupKey,
+            isDefault: this.isDefault,
             weight: this.weight
         }
     }
