@@ -1,4 +1,5 @@
 const User = require('../../model/User');
+const Group = require('../../model/Group');
 const RestResponse = require('../response/RestResponse');
 const validator = require('../middleware/validator');
 const { randomString, generateLink } = require('../../helper/utils');
@@ -16,15 +17,29 @@ exports.register = [
                 req.body.confirmKey = key;
 
                 var user = new User(req.body);
-                let mail = new Mail(req.body.email, 'Confirm your account');
-                mail.render('confirm', {
-                    user: req.body.firstName,
-                    url: generateLink('/confirm/' + key)
-                });
-                mail.send();
-                user.save(function (err) {
-                    if (err) { return RestResponse.error(res, err); }
-                    return RestResponse.successData(res,"Registration Success.", user);
+                Group.find({isDefault: true}).then((group) => {
+                    if(!group) return RestResponse.error(res, "No default group defined");
+                    user.groups.push(group);
+                    user.save(function (err) {
+                        if (err) { return RestResponse.error(res, err); }
+                        group.users.push(user);
+                        group.save(function(err) {
+                            if(err) return RestResponse.error(res, err);
+                            let mail = new Mail(user.email, 'Confirm your account');
+                            mail.render('confirm', {
+                                user: user.firstName,
+                                url: generateLink('/confirm/' + key)
+                            });
+                            mail.send();
+                            user.populate('groups').populate('roles').execPopulate().then((user) => {
+                                return RestResponse.successData(res,"Registration Success.", user);
+                            }).catch((err) => {
+                                return RestResponse.error(res, err);
+                            });
+                        });
+                    });
+                }).catch((err) => {
+                    return RestResponse.error(res, err);
                 });
             });
         } catch(err) {
