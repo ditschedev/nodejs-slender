@@ -6,13 +6,13 @@ const Post = require('../../model/Post');
 
 exports.all = [
     auth,
+    //hasRole(),
     (req, res) => {
         try {
             Post.find().populate('author').exec((err, posts) => {
                 if(err) return RestResponse.error(res, err);
                 return RestResponse.successData(res, "Success", posts);
             });
-            //return RestResponse.success(res, "Ok");
         } catch(err) {
             return RestResponse.error(res, err);
         }
