@@ -10,7 +10,13 @@ module.exports = (req, res, next) => {
         User.findOne({ _id: info.id}).then((user) => {
             if(!user) return RestResponse.unauthorized(res, "Invalid authentication token");
             
-            user.populate('roles').populate('groups').execPopulate().then((user) => {
+            user.populate('roles').populate({
+                path: 'groups',
+                populate: {
+                    path: 'roles',
+                    model: 'Role'
+                }
+            }).execPopulate().then((user) => {
                 req.token = token;
                 req.user = user;
                 next();

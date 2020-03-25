@@ -60,8 +60,11 @@ exports.login = [
                     if(!user.isConfirmed) return RestResponse.unauthorized(res, "Account is not confirmed, please confirm your account");
                     if(!user.status) return RestResponse.unauthorized(res, "Account is not active");
 
+                    let userObj = user.toJSON();
+                    userObj.roles = user.getRoles;
+
                     const secret = process.env.JWT_SECRET;
-                    const token = jwt.sign(user.toJSON(), secret, {
+                    const token = jwt.sign(userObj, secret, {
                         expiresIn: process.env.JWT_TIMEOUT_DURATION
                     });
 

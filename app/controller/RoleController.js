@@ -27,7 +27,7 @@ exports.create = [
     (req, res) => {
         try {
             console.log(req.user);
-            Role.find({roleKey: req.body.roleKey}).then((role) => {
+            Role.findOne({roleKey: req.body.roleKey}).then((role) => {
                 if(role) return RestResponse.conflict(res, "RoleKey `" + req.body.roleKey + "` already used");
 
                 role = new Role(req.body);

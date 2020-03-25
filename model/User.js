@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
+const Role = require('./Role');
 
 var UserSchema = new mongoose.Schema({
 	firstName: {type: String, required: true},
@@ -18,6 +19,14 @@ UserSchema
 	.get(function () {
 		return this.firstName + " " + this.lastName;
 	});
+
+UserSchema.virtual("getRoles").get(function() {
+	let result = Array.from(this.roles.map(role => role.roleKey));
+	this.groups.forEach(group => {
+		result.push(...group.roles.map(role => role.roleKey));
+	});
+	return result;
+});
 
 UserSchema.pre('save', function(next) {
 	if(!this.isModified('password')) return next();
@@ -51,9 +60,7 @@ UserSchema.methods = {
             firstName: this.firstName,
 			lastName: this.lastName,
 			email: this.email,
-			isConfirmed: this.isConfirmed,
-			roles: this.roles,
-			groups: this.groups
+			isConfirmed: this.isConfirmed
         }
     }
 };
