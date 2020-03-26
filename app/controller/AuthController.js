@@ -2,9 +2,10 @@ const User = require('../../model/User');
 const Group = require('../../model/Group');
 const RestResponse = require('../response/RestResponse');
 const validator = require('../middleware/validator');
+const auth = require('../middleware/auth');
 const { randomString, generateLink } = require('../../helper/utils');
 const Mail = require('../../mail/Mail');
-const { auth } = require('../../validation/rules');
+const authRules = require('../../validation/auth');
 const jwt = require("jsonwebtoken");
 
 exports.register = [
@@ -75,6 +76,21 @@ exports.login = [
                     return RestResponse.unauthorized(res, err);
                 });
             });
+        } catch(err) {
+            return RestResponse.error(res, err);
+        }
+    }
+];
+
+exports.me = [
+    auth,
+    (req, res) => {
+        try {
+            let user = req.user.toJSON();
+            user.roles = req.user.getRoles;
+
+            return RestResponse.successData(res, "", user);
+
         } catch(err) {
             return RestResponse.error(res, err);
         }
