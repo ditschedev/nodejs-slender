@@ -1,7 +1,7 @@
 const RestResponse = require('../response/RestResponse');
 const validator = require('../middleware/validator');
 const auth = require('../middleware/auth');
-const { posts } = require('../../validation/rules');
+const postRules = require('../../validation/posts');
 const Post = require('../../model/Post');
 
 exports.all = [
@@ -21,7 +21,7 @@ exports.all = [
 
 exports.create = [
     auth,
-    validator(posts.create),
+    validator(postRules.create),
     (req, res) => {
         try {
             let post = new Post(req.body);
@@ -43,7 +43,7 @@ exports.create = [
 
 exports.update = [
     auth,
-    validator(posts.update),
+    validator(postRules.update),
     (req, res) => {
         try {
             if(!req.params.id) return RestResponse.bad(res, "No id provided");
