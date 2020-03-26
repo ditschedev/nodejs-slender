@@ -26,7 +26,6 @@ exports.create = [
     validator(roleRules.create),
     (req, res) => {
         try {
-            console.log(req.user);
             Role.findOne({roleKey: req.body.roleKey}).then((role) => {
                 if(role) return RestResponse.conflict(res, "RoleKey `" + req.body.roleKey + "` already used");
 
