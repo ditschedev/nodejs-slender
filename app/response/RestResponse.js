@@ -47,7 +47,7 @@ exports.invalidData = function(res, msg, data) {
 exports.unauthorized = function(res, msg) {
     return res.status(401).json({
         success: false,
-        message: msg
+        message: msg.message || msg
     });
 };
 

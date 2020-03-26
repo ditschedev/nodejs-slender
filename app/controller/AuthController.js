@@ -9,7 +9,7 @@ const authRules = require('../../validation/auth');
 const jwt = require("jsonwebtoken");
 
 exports.register = [
-    validator(auth.create),
+    validator(authRules.create),
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {
@@ -50,7 +50,7 @@ exports.register = [
 ];
 
 exports.login = [
-    validator(auth.login),
+    validator(authRules.login),
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {
@@ -60,17 +60,26 @@ exports.login = [
                 user.tryLogin(req.body.password).then(() => {
                     if(!user.isConfirmed) return RestResponse.unauthorized(res, "Account is not confirmed, please confirm your account");
                     if(!user.status) return RestResponse.unauthorized(res, "Account is not active");
+                    user.populate('roles').populate({
+                        path: 'groups',
+                        populate: {
+                            path: 'roles',
+                            model: 'Role'
+                        }
+                    }).execPopulate().then((user) => {
+                        let userObj = user.toJSON();
+                        userObj.roles = user.getRoles;
 
-                    let userObj = user.toJSON();
-                    userObj.roles = user.getRoles;
+                        const secret = process.env.JWT_SECRET;
+                        const token = jwt.sign(userObj, secret, {
+                            expiresIn: process.env.JWT_TIMEOUT_DURATION
+                        });
 
-                    const secret = process.env.JWT_SECRET;
-                    const token = jwt.sign(userObj, secret, {
-                        expiresIn: process.env.JWT_TIMEOUT_DURATION
-                    });
-
-                    return RestResponse.successData(res, "Login successfull", {
-                        token: token
+                        return RestResponse.successData(res, "Login successfull", {
+                            token: token
+                        });
+                    }).catch((err) => {
+                        return RestResponse.error(res, err);
                     });
                 }).catch((err) => {
                     return RestResponse.unauthorized(res, err);
@@ -98,7 +107,7 @@ exports.me = [
 ];
 
 exports.verify = [
-    validator(auth.verify),
+    validator(authRules.verify),
     (req, res) => {
         try {
             User.findOne({confirmKey: req.body.confirmKey}).then((user) => {
@@ -118,7 +127,7 @@ exports.verify = [
 ];
 
 exports.resendConfirmation = [
-    validator(auth.resend),
+    validator(authRules.resend),
     (req, res) => {
         try {
             User.findOne({email: req.body.email}).then((user) => {

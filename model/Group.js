@@ -24,8 +24,27 @@ GroupSchema.methods = {
 };
 
 GroupSchema.pre('save', function(next) {
-    // TODO: if isDefault == true -> Set isDefault to false on all others
-    return next();
+    if(this.isModified('isDefault')) {
+        if(!this.isDefault) {
+            this.constructor.findOne({isDefault: true}).then((group) => {
+                if(!group) {
+                    this.isDefault = true;
+                    return next('No default group set');
+                }
+                next();
+            });
+        } else {
+            this.constructor.find().then((groups) => {
+                groups.forEach(group => {
+                    group.isDefault = false;
+                    group.save();
+                });
+                this.isDefault = true;
+            });
+        }
+    }
+    next();
 });
+
 
 module.exports = mongoose.model("Group", GroupSchema);

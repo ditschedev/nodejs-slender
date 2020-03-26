@@ -22,8 +22,9 @@ UserSchema
 
 UserSchema.virtual("getRoles").get(function() {
 	let result = Array.from(this.roles.map(role => role.roleKey));
+	console.log(this);
 	this.groups.forEach(group => {
-		result.push(...group.roles.map(role => role.roleKey));
+		result.push(...(group.roles.map(role => role.roleKey)));
 	});
 	return result;
 });
