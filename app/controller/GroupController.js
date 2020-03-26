@@ -54,14 +54,19 @@ exports.update = [
             Group.findById(req.params.id).exec((err, group) => {
                 if(err) return RestResponse.error(res, err);
                 if(!group) return RestResponse.notFound(res, "Group not found");
-                // TODO: Rewrite to use save instead of update
-                group.update(req.body, (err, status) => {
+                group.title = req.body.title;
+                group.description = req.body.description;
+                group.weight = req.body.weight;
+                group.isDefault = req.body.isDefault || false;
+                group.save().then((group) => {
                     if(err) return RestResponse.error(res, err);
                     group.populate('roles').execPopulate().then((group) => {
                         return RestResponse.successData(res, "Group has been saved", group);
                     }).catch((err) => {
                         return RestResponse.error(res, err);
                     });
+                }).catch((err) => {
+                    return RestResponse.error(res, err);
                 });
             });
         } catch(err) {
@@ -95,12 +100,14 @@ exports.addUser = [
     auth,
     validator(groupRules.addUser),
     (req, res) => {
-        // TODO: Check if given :id is valid
+        if(!req.params.id) return RestResponse.bad(res, "No id provided");
         Group.findById(req.params.id).then((group) => {
             User.findById(req.body.userId).then((user) => {
                 if(!user) return RestResponse.bad(res, "Given user invalid");
 
-                // TODO: Check if user is in group
+                if(req.user.groups.some(group => group._id == req.params.id)) {
+                    return RestResponse.conflict(res, "Already member of group " + group.title);
+                }
 
                 user.groups.push(group);
                 user.save().then((user) => {
@@ -124,6 +131,7 @@ exports.addUser = [
 exports.removeUser = [
     auth,
     (req, res) => {
+        if(!req.params.id) return RestResponse.bad(res, "No id provided");
         User.findById(req.body.userId).then((user) => {
             if(!user) return RestResponse.bad(res, "Given user invalid");
             console.log(user);
