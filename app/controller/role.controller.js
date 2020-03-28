@@ -1,7 +1,6 @@
 const RestResponse = require('../response/RestResponse');
-const auth = require('../middleware/auth');
-const hasRole = require('../middleware/hasRole');
-const Role = require('../../model/Role');
+const { auth, hasRole } = require('../middleware');
+const { Role } = require('../model');
 
 exports.all = [
     auth,

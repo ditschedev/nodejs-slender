@@ -1,10 +1,7 @@
 const RestResponse = require('../response/RestResponse');
-const validator = require('../middleware/validator');
-const auth = require('../middleware/auth');
-const groupRules = require('../../validation/groups');
-const Group = require('../../model/Group');
-const Role = require('../../model/Role');
-const User = require('../../model/User');
+const { validator, auth} = require('../middleware');
+const { groupRules } = require('../validation');
+const { Group, Role, User } = require('../model');
 
 exports.all = [
     auth,

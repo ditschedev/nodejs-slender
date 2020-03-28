@@ -1,5 +1,4 @@
 const RestResponse = require('../response/RestResponse');
-require('../../model/Group');
 
 module.exports = function(roleKey) {
     return (req, res, next) => {

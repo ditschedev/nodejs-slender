@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
-const Role = require('./Role');
+const Role = require('./role.model');
 
 var UserSchema = new mongoose.Schema({
 	firstName: {type: String, required: true},

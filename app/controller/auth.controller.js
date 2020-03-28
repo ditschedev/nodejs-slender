@@ -1,11 +1,9 @@
-const User = require('../../model/User');
-const Group = require('../../model/Group');
+const {User, Group} = require('../model');
 const RestResponse = require('../response/RestResponse');
-const validator = require('../middleware/validator');
-const auth = require('../middleware/auth');
-const { randomString, generateLink } = require('../../helper/utils');
-const Mail = require('../../mail/Mail');
-const authRules = require('../../validation/auth');
+const { validator, auth } = require('../middleware');
+const { randomString, generateLink } = require('../helper/utils');
+const Mail = require('../mail/Mail');
+const { authRules } = require('../validation');
 const jwt = require("jsonwebtoken");
 
 exports.register = [

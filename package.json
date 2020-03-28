@@ -2,7 +2,7 @@
   "name": "node-api",
   "version": "1.0.0",
   "description": "Boilerplate for NodeJS Rest API",
-  "author": "Tobias Dittmann",
+  "author": "Tobias Dittmann <hello@ditsche.dev> (https://ditsche.dev)",
   "license": "MIT",
   "private": true,
   "scripts": {
