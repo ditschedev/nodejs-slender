@@ -1,0 +1,32 @@
+<mjml>
+    <mj-head>
+        <mj-title>Test</mj-title>
+        <mj-attributes>
+            
+        </mj-attributes>
+    </mj-head>
+    <mj-body background-color="#F7FAFC">
+      <mj-wrapper background-color="#fff">
+        	<mj-section>
+        		<mj-column>
+          			<mj-image width="132px" src="https://cdn.minalytics.io/logo-light@2x.png">
+              	</mj-image>
+          	</mj-column>	
+        	</mj-section>
+        	<mj-section background-color="#fff">
+            <mj-column>
+                <mj-text align="center" font-size="21px" color="#101C39">
+                    Welcome {{ user }}!
+                </mj-text>
+              <mj-text line-height="21px" color="#718096">
+              	Thanks for signing up with minalytics. To start collecting privacy driven analytics and protecting your customers data from third parties, you need to 
+                confirm your email address. Click the following link to activate your account:
+              </mj-text>
+                <mj-button background-color="#FFA26E" href="{{ url }}">
+                        Confirm account
+                    </mj-button>
+            </mj-column>
+        </mj-section>
+      </mj-wrapper>
+    </mj-body>
+</mjml>

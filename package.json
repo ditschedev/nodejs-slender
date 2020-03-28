@@ -1,0 +1,33 @@
+{
+  "name": "node-api",
+  "version": "1.0.0",
+  "description": "Boilerplate for NodeJS Rest API",
+  "author": "Tobias Dittmann <hello@ditsche.dev> (https://ditsche.dev)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node ./app/www",
+    "dev": "nodemon ./app/www",
+    "test": "nyc _mocha --timeout 10000 --exit --report lcovonly -- -R spec",
+    "lint": "eslint --fix --config .eslintrc.json \"**/*.js\""
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-jwt": "^5.3.1",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "migrate-mongo": "^7.1.0",
+    "mjml": "^4.6.2",
+    "mocha": "^7.1.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.9.5",
+    "morgan": "^1.10.0",
+    "mustache": "^4.0.1",
+    "nodemailer": "^6.4.6",
+    "nodemon": "^2.0.2"
+  }
+}
