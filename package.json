@@ -23,7 +23,7 @@
     "migrate-mongo": "^7.1.0",
     "mjml": "^4.6.2",
     "mocha": "^7.1.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongoose": "^5.9.5",
     "morgan": "^1.10.0",
     "mustache": "^4.0.1",
